@@ -8,7 +8,8 @@ var Graphics = {
 		this.margin = {
 			outer: args.margin === undefined || args.margin.outer === undefined ? 20: args.margin.outer,
 			inner: args.margin === undefined || args.margin.inner === undefined ? 10: args.margin.inner,
-			letters: 15
+			token: args.margin === undefined || args.margin.token === undefined ? 2: args.margin.token,
+			letters: args.letterSize === undefined ? 20: args.letterSize
 		};
 		this.lineStyle = {
 			innerLine: 2,
@@ -35,6 +36,7 @@ var Graphics = {
 		this.ctx.beginPath();
 		this.ctx.rect(50 + this.x++*5,50, 100, 100);
 		this.ctx.fill();*/
+		this.drawTokens();
 		window.requestAnimationFrame(function(){
 			Graphics.draw();
 		});
@@ -47,10 +49,11 @@ var Graphics = {
 		
 		this.ctx.fillStyle = this.ctx.strokeStyle;
 		this.ctx.lineWidth = this.lineStyle.innerLine;
-		this.ctx.font = "bold " + this.margin.letters + "px Arial";
+		this.ctx.font = "bold " + (this.margin.letters*3/4) + "px Arial";
 		this.ctx.textAlign = "center";
 		var allMargin = this.margin.outer + this.lineStyle.outerLine + this.margin.letters + this.margin.inner;
-		var fieldWidth = (this.size.min - 2* allMargin) / 18;
+		var fieldWidth = (this.size.min - 2* allMargin) / 19;
+		allMargin += fieldWidth/2;
 		//console.log("min:" , this.size.min , ", allMargin: ", allMargin, ", fieldWidth: ", fieldWidth);
 		var A = "A".charCodeAt(0);
 		var I = "I".charCodeAt(0);
@@ -61,8 +64,8 @@ var Graphics = {
 			this.ctx.lineTo(this.size.min - allMargin, allMargin + i * fieldWidth);
 			this.ctx.stroke();
 			
-			this.ctx.fillText(19-i, allMargin - this.margin.letters - this.margin.inner/2, allMargin + i* fieldWidth + this.margin.letters/2);
-			this.ctx.fillText(19-i, this.size.min - (allMargin - this.margin.letters - this.margin.inner/2), allMargin + i* fieldWidth + this.margin.letters/2);
+			this.ctx.fillText(19-i, allMargin - this.margin.letters*3/4 - fieldWidth/2, allMargin + i* fieldWidth + this.margin.letters*1/4);
+			this.ctx.fillText(19-i, this.size.min - (allMargin - this.margin.letters*3/4 - fieldWidth/2), allMargin + i* fieldWidth + this.margin.letters*1/4);
 			
 			//Vertikale Linien
 			this.ctx.beginPath();
@@ -73,9 +76,8 @@ var Graphics = {
 			if(I == A+j){
 				j++;
 			}
-			this.ctx.fillText(String.fromCharCode(A + j), allMargin + i* fieldWidth, allMargin - this.margin.letters/2 - this.margin.inner/2);
-			this.ctx.fillText(String.fromCharCode(A + j), allMargin + i* fieldWidth, this.size.min - (allMargin - this.margin.letters - this.margin.inner/2));
-			
+			this.ctx.fillText(String.fromCharCode(A + j), allMargin + i* fieldWidth, allMargin - this.margin.inner/2 - fieldWidth/2);
+			this.ctx.fillText(String.fromCharCode(A + j), allMargin + i* fieldWidth, this.size.min - (allMargin - this.margin.letters/2 - this.margin.inner/2 - fieldWidth/2));
 		}
 		
 		for(var i = 3; i < 19; i += 6){
@@ -90,5 +92,26 @@ var Graphics = {
 		this.ctx.strokeRect(this.margin.outer, this.margin.outer, this.size.min - 2*this.margin.outer, this.size.min - 2*this.margin.outer);
 		
 		this.board = this.ctx.getImageData(0,0, this.size.min, this.size.min);
+	},
+	
+	drawTokens: function() {
+		for(var i = 0; i < Game.board.length; i++){
+			for(var j = 0; j < Game.board[0].length; j++){
+				if(Game.board[i][j] !== undefined){
+					this.drawToken(j, i, Game.board[i][j] == white ? "#FFFFFF": "#000000");
+				}
+			}
+		}
+	},
+	
+	drawToken: function(row, col, color){
+		var allMargin = this.margin.outer + this.lineStyle.outerLine + this.margin.letters + this.margin.inner;
+		var fieldWidth = (this.size.min - 2* allMargin) / 19;
+		allMargin += fieldWidth/2;
+		
+		this.ctx.fillStyle = color;
+		this.ctx.beginPath();
+		this.ctx.arc(allMargin + row * fieldWidth, allMargin + col * fieldWidth, fieldWidth/2 - this.margin.token, 0, 2*Math.PI);
+		this.ctx.fill();
 	}
 };
