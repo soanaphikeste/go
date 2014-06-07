@@ -24,11 +24,12 @@ var Graphics = {
 		this.x = 0;
 		console.log("Graphics started");
 		window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+		this.setupBoard();
 		this.draw();
 	},
 	
 	draw: function(){
-		this.drawBoard();
+		this.ctx.putImageData(this.board, 0,0);//, this.size.min, this.size.min);
 		/*this.ctx.clearRect(0,0, this.size.width, this.size.height);
 		this.ctx.fillStyle = "red";
 		this.ctx.beginPath();
@@ -39,7 +40,7 @@ var Graphics = {
 		});
 	},
 	
-	drawBoard: function(){
+	setupBoard: function(){
 		this.ctx.strokeStyle = "#5E401E";
 		this.ctx.fillStyle = "#E7D3A7";
 		this.ctx.fillRect(0,0, this.size.min, this.size.min);
@@ -77,8 +78,17 @@ var Graphics = {
 			
 		}
 		
+		for(var i = 3; i < 19; i += 6){
+			for(var j = 3; j < 19; j += 6){
+				this.ctx.beginPath();
+				this.ctx.arc(allMargin + i * fieldWidth, allMargin + j * fieldWidth, fieldWidth/4, 0, Math.PI*2);
+				this.ctx.fill();
+			}
+		}
+		
 		this.ctx.lineWidth = this.lineStyle.outerLine;
 		this.ctx.strokeRect(this.margin.outer, this.margin.outer, this.size.min - 2*this.margin.outer, this.size.min - 2*this.margin.outer);
 		
+		this.board = this.ctx.getImageData(0,0, this.size.min, this.size.min);
 	}
 };
