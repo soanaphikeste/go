@@ -1,0 +1,11 @@
+{
+	"name": "go",
+	"repository": "http://git.cronosx.de/Go",
+	"description": "Network Go game",
+	"version": "0.0.0",
+	"readmeFilename": "README",
+	"devDependencies": {
+		"ws": "~0.4.31",
+		"mime": "~1.2.11"
+	}
+}
