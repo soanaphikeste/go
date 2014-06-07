@@ -18,6 +18,18 @@ var Game = {
 		this.board[0][18] = black;
 		console.log(this.board[7][7]);
 		console.log("Game started");
+	},
+	
+	place: function(row, col, color){
+		if(color !== white && color !== black){
+			console.error("Invalid color: " + color);
+			return;
+		}
+		if(this.board[row, col] !== undefined){
+			console.error("Invalid move! Cannot place at: (" + col + "|" + row + ")");
+			return;
+		}
+		this.board[row][col] = color;
 	}
 };
 
