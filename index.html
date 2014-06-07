@@ -1,0 +1,28 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<title>Go</title>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+		<script src="graphics.js"></script>
+		<script src="game.js"></script>
+		<link rel="stylesheet" href="style.css" />
+	</head>
+	<body>
+		<canvas width="800" height="600"></canvas>
+		<script>
+			$(function(){
+				console.log("Hello");
+				Game.init();
+				Graphics.init({
+					canvas: $("canvas"),
+					game: Game,
+					margin: {
+						inner: 10,
+						outer: 20
+					}
+				});
+			});
+		</script>
+	</body>
+</html>
