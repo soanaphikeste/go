@@ -4,6 +4,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<title>Go</title>
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+		<script src="vector.js"></script>
 		<script src="graphics.js"></script>
 		<script src="game.js"></script>
 		<script src="cursor.js"></script>
@@ -14,7 +15,7 @@
 		<script>
 			$(function(){
 				console.log("Hello");
-				var cursor = new Cursor($("canvas")[0], "#6060D5");
+				var cursor = new Cursor($("canvas")[0], { cursorColor: "#6060D5", tokenColor: "#8989E0"});
 				Game.init();
 				Graphics.init({
 					canvas: $("canvas"),
