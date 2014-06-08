@@ -109,6 +109,10 @@ Client.prototype = {
 	
 	sendRemoveToken: function(tokens){
 		this.connection.send("removeToken", tokens);
+	},
+	
+	sendColor : function(color){
+		this.connection.send("color", color);
 	}
 };
 

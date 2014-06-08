@@ -6,6 +6,7 @@ var Cursor = function(canvas, colors){
 	this.drawStyle = {
 		lineWidth: 4,
 		cursorColor: colors === undefined || colors.cursorColor === undefined ? "#6060D5": colors.cursorColor,
+		cursorColorDeactivated: colors === undefined || colors.cursorColorDeactivated === undefined ? "grey": colors.cursorColorDeactivated,
 		tokenColor: colors === undefined || colors.tokenColor === undefined ? "#8989E0": colors.tokenColor,
 		wrongCursorColor: "#AE361F"
 	};
@@ -39,11 +40,15 @@ Cursor.prototype = {
 	draw: function(){
 		var ctx = Graphics.ctx;
 		var fieldWidth = Graphics.size.field;
-		var color = this.drawStyle.cursorColor;
+		var color = Game.isMyTurn() ? this.drawStyle.cursorColor : this.drawStyle.cursorColorDeactivated;
 		
-		if(this.cell !== undefined){
-			if(Game.board[this.cell.y][this.cell.x] !== undefined){
-				color = this.drawStyle.wrongCursorColor;
+		if(this.cell !== undefined || !Game.isMyTurn()){//Either if it is not our turn or we cannot place here as there is already a token
+			if(!Game.isMyTurn() || Game.board[this.cell.y][this.cell.x] !== undefined){
+				color = Game.isMyTurn() ? this.drawStyle.wrongCursorColor : this.drawStyle.cursorColorDeactivated;
+				/*
+				 * \/
+				 * /\
+				 */
 				ctx.strokeStyle = color;
 				ctx.lineWidth = 5;
 				var startPos1 = this.pos.sub(new vec(fieldWidth/4, fieldWidth/4));
@@ -61,29 +66,34 @@ Cursor.prototype = {
 				ctx.stroke();
 			}
 			else{
-				Graphics.drawToken(this.cell.x, this.cell.y, this.drawStyle.tokenColor);
+				/*
+				 * Draw the ghost-token
+				 */
+				var color2;
+				if(Game.ownColor == white) {
+					color2 = "rgba(255, 255, 255, 0.55)";
+				}
+				else {
+					color2 = "rgba(0, 0, 0, 0.4)";
+				}
+				Graphics.drawToken(this.cell.x, this.cell.y, color2);
 			}
 		}
 		
+		/*
+		 * Draw the cool turning rings
+		 */
 		ctx.strokeStyle = color;
 		ctx.lineWidth = this.drawStyle.lineWidth;
-		
-		ctx.beginPath();
-		ctx.arc(this.pos.x, this.pos.y, fieldWidth/2 + ctx.lineWidth/2, -Math.PI/4 + this.gap/2 + this.phi, Math.PI/4 - this.gap/2 + this.phi);
-		ctx.stroke();
-		ctx.beginPath();
-		ctx.arc(this.pos.x, this.pos.y, fieldWidth/2 + ctx.lineWidth/2, Math.PI/4 + this.gap/2 + this.phi, 3*Math.PI/4 - this.gap/2 + this.phi);
-		ctx.stroke();
-		ctx.beginPath();
-		ctx.arc(this.pos.x, this.pos.y, fieldWidth/2 + ctx.lineWidth/2, 3*Math.PI/4 + this.gap/2 + this.phi, 5*Math.PI/4 - this.gap/2 + this.phi);
-		ctx.stroke();
-		ctx.beginPath();
-		ctx.arc(this.pos.x, this.pos.y, fieldWidth/2 + ctx.lineWidth/2, 5*Math.PI/4 + this.gap/2 + this.phi, 7*Math.PI/4 - this.gap/2 + this.phi);
-		ctx.stroke();
+		for(var i = -1; i <= 7; i+=2) {
+			ctx.beginPath();
+			ctx.arc(this.pos.x, this.pos.y, fieldWidth/2 + ctx.lineWidth/2, i*Math.PI/4 + this.gap/2 + this.phi, (i+2)*Math.PI/4 - this.gap/2 + this.phi);
+			ctx.stroke();
+		}
 		
 		
 		
-		this.phi += degToRad(2);
+		if(Game.isMyTurn()) this.phi += degToRad(2);
 	}
 };
 

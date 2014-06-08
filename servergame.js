@@ -10,7 +10,6 @@ var ServerGame = function(members){
 	
 	this.challenger = members.challenger;
 	this.opponent = members.opponent;
-	
 	this.challengerTurn = false;
 };
 
@@ -125,6 +124,8 @@ ServerGame.prototype = {
 		console.log(player.name + " is now ready");
 		player._game_ready = true;
 		if(this.challenger._game_ready && this.opponent._game_ready){
+			this.challenger.sendColor(challenger);
+			this.opponent.sendColor(opponent);
 			this.nextTurn();
 		}
 	},

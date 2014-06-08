@@ -20,7 +20,6 @@
 		</div>
 		<script>
 			var opponent;
-			var my_name;
 			
 			function showTemplate(template, handler){
 				$.ajax({
@@ -57,10 +56,53 @@
 				showTemplate("loading");
 				console.log("Hello");
 				Connection.init();
-				Connection.addMessageListener("setName", function(data){
-					my_name = data;
+				Connection.addMessageListener("setName", function(myName){
+					
+					Connection.addMessageListener("matchRequest", function(name, answer){
+						if(opponent !== undefined){
+							answer(false);
+						}
+						else{
+							showConfirmPopUp(name + " hat dich herausgefordert. Möchtest du die Herausforderung annehmen?", "Ja", "Nein", function(yes){
+								if(yes){
+									opponent = name;
+								}
+								answer(yes);
+							});
+						}
+					}, true);
+					Connection.addMessageListener("matchDeclined", function(reason){
+						opponent = undefined;
+						showPopUp(reason);
+					});
+					Connection.addMessageListener("matchAccepted", function(challenger, answer){
+						showTemplate("game", function(node){
+							node.find("#challenger").html(challenger);
+							var opp = myName;
+							if(challenger == myName){
+								opp = opponent;
+							}
+							node.find("#opponent").html(opp);
+							startGame(myName);
+							answer();
+						});
+					}, true);
+					Connection.addMessageListener("nextTurn", function(name){
+						Game.currentPlayer = name;
+						var challenger = $("#challenger").html();
+						console.log("Challenger: " + challenger);
+						if(challenger == name){
+							$("#challenger").css({"color": "red"});
+							$("#opponent").css({"color": "black"});
+						}
+						else{
+							$("#challenger").css({"color": "black"});
+							$("#opponent").css({"color": "red"});
+						}
+					});
+					
 					showTemplate("start", function(node) {
-						node.find("#my_name").html("Mein Name: " + data.substring(0,1).toUpperCase() + data.substring(1, data.length).toLowerCase());
+						node.find("#my_name").html("Mein Name: " + myName.substring(0,1).toUpperCase() + myName.substring(1, myName.length).toLowerCase());
 						var name = node.find("#other_name");
 						node.find("#challenge").click(function(){
 							challenge(name.val().toUpperCase());
@@ -71,55 +113,6 @@
 							}
 						});
 					});
-				});
-				Connection.addMessageListener("matchRequest", function(name, answer){
-					if(opponent !== undefined){
-						answer(false);
-					}
-					else{
-						showConfirmPopUp(name + " hat dich herausgefordert. Möchtest du die Herausforderung annehmen?", "Ja", "Nein", function(yes){
-							if(yes){
-								opponent = name;
-							}
-							answer(yes);
-						});
-					}
-				}, true);
-				Connection.addMessageListener("matchDeclined", function(reason){
-					opponent = undefined;
-					showPopUp(reason);
-				});
-				Connection.addMessageListener("matchAccepted", function(challenger, answer){
-					showTemplate("game", function(node){
-						node.find("#challenger").html(challenger);
-						var opp = my_name;
-						if(challenger == my_name){
-							opp = opponent;
-						}
-						node.find("#opponent").html(opp);
-						startGame();
-						answer();
-					});
-				}, true);
-				Connection.addMessageListener("nextTurn", function(name){
-					var challenger = $("#challenger").html();
-					console.log("Challenger: " + challenger);
-					if(challenger == name){
-						$("#challenger").css({"color": "red"});
-						$("#opponent").css({"color": "black"});
-					}
-					else{
-						$("#challenger").css({"color": "black"});
-						$("#opponent").css({"color": "red"});
-					}
-				});
-				Connection.addMessageListener("madeTurn", function(pos){
-					Game.place(pos.row, pos.col);
-				});
-				Connection.addMessageListener("removeToken", function(tokens){
-					for(token in tokens){
-						Game.remove(tokens[token].row, tokens[token].col);
-					}
 				});
 			});
 		</script>

@@ -1,10 +1,10 @@
 var white = true;
 var black = false;
 
-function startGame(){
+function startGame(myName){
 	var canvas = $("canvas");
-	var cursor = new Cursor(canvas[0], { cursorColor: "#6060D5", tokenColor: "#8989E0"});
-	Game.init();
+	var cursor = new Cursor(canvas[0], { cursorColor: "#6060D5", tokenColor: "#8989E0", cursorColorDeactivated: "grey"});
+	Game.init(myName);
 	Graphics.init({
 		canvas: canvas,
 		margin: {
@@ -28,22 +28,23 @@ function challenge(name){
 
 var Game = {
 	
-	init: function(){	
+	init: function(myName){
+		var self = this;
+		this.myName = myName;	
 		for(this.board = []; this.board.length < 19; this.board.push(Array(19)));
-		/*this.board[7][7] = white;
-		this.board[7][0] = white;
-		this.board[7][10] = white;
-		this.board[0][0] = white;
-		this.board[18][18] = white;
-		
-		this.board[8][7] = black;
-		this.board[3][0] = black;
-		this.board[2][10] = black;
-		this.board[18][0] = black;
-		this.board[0][18] = black;
-		console.log(this.board[7][7]);*/
-		this.color = black;
+		this.currentColor = black;
 		console.log("Game started");
+		Connection.addMessageListener("removeToken", function(tokens){
+			for(token in tokens){
+				self.remove(tokens[token].row, tokens[token].col);
+			}
+		});
+		Connection.addMessageListener("madeTurn", function(pos){
+			self.place(pos.row, pos.col);
+		});
+		Connection.addMessageListener("color", function(color){
+			self.ownColor = color;
+		});
 	},
 	
 	place: function(row, col){
@@ -51,12 +52,16 @@ var Game = {
 			console.error("Invalid move! Cannot place at: (" + col + "|" + row + ")");
 			return;
 		}
-		this.board[row][col] = this.color;
-		this.color = !this.color;
+		this.board[row][col] = this.currentColor;
+		this.currentColor = !this.currentColor;
 	},
 	
 	remove: function(row, col){
 		this.board[row][col] = undefined;
+	},
+	
+	isMyTurn: function() {
+		return this.myName == this.currentPlayer;
 	}
 };
 
