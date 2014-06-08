@@ -28,6 +28,11 @@ var Cursor = function(canvas, colors){
 		}
 		//console.log(self.cell);
 	});
+	canvas.addEventListener("mouseup", function(evt){
+		if(self.cell !== undefined){
+			Connection.send("click", {row: self.cell.y, col: self.cell.x});
+		}
+	});
 };
 
 Cursor.prototype = {

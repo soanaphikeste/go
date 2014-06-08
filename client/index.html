@@ -113,6 +113,9 @@
 						$("#opponent").css({"color": "red"});
 					}
 				});
+				Connection.addMessageListener("madeTurn", function(pos){
+					Game.place(pos.row, pos.col);
+				});
 			});
 		</script>
 	</body>

@@ -30,7 +30,7 @@ var Game = {
 	
 	init: function(){	
 		for(this.board = []; this.board.length < 19; this.board.push(Array(19)));
-		this.board[7][7] = white;
+		/*this.board[7][7] = white;
 		this.board[7][0] = white;
 		this.board[7][10] = white;
 		this.board[0][0] = white;
@@ -41,20 +41,18 @@ var Game = {
 		this.board[2][10] = black;
 		this.board[18][0] = black;
 		this.board[0][18] = black;
-		console.log(this.board[7][7]);
+		console.log(this.board[7][7]);*/
+		this.color = black;
 		console.log("Game started");
 	},
 	
-	place: function(row, col, color){
-		if(color !== white && color !== black){
-			console.error("Invalid color: " + color);
-			return;
-		}
-		if(this.board[row, col] !== undefined){
+	place: function(row, col){
+		if(this.board[row][col] !== undefined){
 			console.error("Invalid move! Cannot place at: (" + col + "|" + row + ")");
 			return;
 		}
-		this.board[row][col] = color;
+		this.board[row][col] = this.color;
+		this.color = !this.color;
 	}
 };
 

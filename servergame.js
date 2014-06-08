@@ -33,6 +33,7 @@ ServerGame.prototype = {
 				this.challenger.sendTurn(row, col);
 				this.opponent.sendTurn(row, col);
 				this.challengerTurn = !this.challengerTurn;
+				this.nextTurn();
 			}
 			else if(this.challengerTurn){ 
 				this.challenger.sendInvalidTurn(row, col, "Invalid turn");

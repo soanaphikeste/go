@@ -45,7 +45,7 @@ var Client = function(clients, connection){
 	
 	this.connection.addListener("click", function(pos){
 		if(self.game !== undefined){
-			self.game.makeTurn(self, pos.y, pos.x);
+			self.game.makeTurn(self, pos.row, pos.col);
 		}
 	});
 };
