@@ -20,7 +20,7 @@
 		</div>
 		<script>
 			var opponent;
-			var name;
+			var my_name;
 			
 			function showTemplate(template, handler){
 				$.ajax({
@@ -58,7 +58,7 @@
 				console.log("Hello");
 				Connection.init();
 				Connection.addMessageListener("setName", function(data){
-					name = data;
+					my_name = data;
 					showTemplate("start", function(node) {
 						node.find("#my_name").html("Mein Name: " + data.substring(0,1).toUpperCase() + data.substring(1, data.length).toLowerCase());
 						var name = node.find("#other_name");
@@ -78,7 +78,9 @@
 					}
 					else{
 						showConfirmPopUp(name + " hat dich herausgefordert. Möchtest du die Herausforderung annehmen?", "Ja", "Nein", function(yes){
-							opponent = name;
+							if(yes){
+								opponent = name;
+							}
 							answer(yes);
 						});
 					}
@@ -87,18 +89,29 @@
 					opponent = undefined;
 					showPopUp(reason);
 				});
-				Connection.addMessageListener("matchAccepted", function(challenger){
+				Connection.addMessageListener("matchAccepted", function(challenger, answer){
 					showTemplate("game", function(node){
 						node.find("#challenger").html(challenger);
-						var opp = name;
-						if(challenger == name){
+						var opp = my_name;
+						if(challenger == my_name){
 							opp = opponent;
 						}
 						node.find("#opponent").html(opp);
 						startGame();
+						answer();
 					});
-				});
-				Connection.addOpenListener(function(evt){
+				}, true);
+				Connection.addMessageListener("nextTurn", function(name){
+					var challenger = $("#challenger").html();
+					console.log("Challenger: " + challenger);
+					if(challenger == name){
+						$("#challenger").css({"color": "red"});
+						$("#opponent").css({"color": "black"});
+					}
+					else{
+						$("#challenger").css({"color": "black"});
+						$("#opponent").css({"color": "red"});
+					}
 				});
 			});
 		</script>

@@ -70,13 +70,13 @@ Client.prototype = {
 		var self = this;
 		this.connection.send("matchRequest", requester.name, function(accepted){
 			if(accepted){
+				self.sendAcceptMatch(requester.name);
+				requester.sendAcceptMatch(requester.name);
 				self.game = new ServerGame({
 					challenger: requester,
 					opponent: self
 				});
 				requester.game = self.game;
-				self.sendAcceptMatch(requester.name);
-				requester.sendAcceptMatch(requester.name);
 			}
 			else{
 				requester.sendDeclineMatch("Der andere Spieler hat die Herausforderung abgelehnt");
@@ -85,7 +85,10 @@ Client.prototype = {
 	},
 	
 	sendAcceptMatch: function(challenger){
-		this.connection.send("matchAccepted", challenger);
+		var self = this;
+		this.connection.send("matchAccepted", challenger, function(){
+			self.game.ready(self);
+		});
 	},
 	
 	sendDeclineMatch: function(reason){
@@ -98,6 +101,10 @@ Client.prototype = {
 	
 	sendTurn: function(row, col){
 		this.connection.send("madeTurn", { row: row, col: col});
+	},
+	
+	sendInvalidTurn: function(row, col, reason){
+		this.connection.send("invalidTurn", {row: row, col: col, reason: reason});
 	}
 };
 
