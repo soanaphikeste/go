@@ -20,6 +20,7 @@
 		</div>
 		<script>
 			var opponent;
+			var name;
 			
 			function showTemplate(template, handler){
 				$.ajax({
@@ -40,11 +41,13 @@
 			}
 			
 			function showConfirmPopUp(message, yes, no, clickHandler){
-				$("<div>" + message + "</div>")
-					.append($("<button>" + yes + "</button>").click(function(){
+				var div = $('<div>' + message + "</div>");
+					div.append($("<button>" + yes + "</button>").click(function(){
+							div.remove();
 							clickHandler(true);
 						}))
 					.append($("<button>" + no + "</button>").click(function(){
+							div.remove();
 							clickHandler(false);
 						}))
 					.appendTo($("body"));
@@ -55,6 +58,7 @@
 				console.log("Hello");
 				Connection.init();
 				Connection.addMessageListener("setName", function(data){
+					name = data;
 					showTemplate("start", function(node) {
 						node.find("#my_name").html("Mein Name: " + data.substring(0,1).toUpperCase() + data.substring(1, data.length).toLowerCase());
 						var name = node.find("#other_name");
@@ -74,16 +78,24 @@
 					}
 					else{
 						showConfirmPopUp(name + " hat dich herausgefordert. Möchtest du die Herausforderung annehmen?", "Ja", "Nein", function(yes){
+							opponent = name;
 							answer(yes);
 						});
 					}
 				}, true);
 				Connection.addMessageListener("matchDeclined", function(reason){
+					opponent = undefined;
 					showPopUp(reason);
 				});
-				Connection.addMessageListener("matchAccepted", function(data){
+				Connection.addMessageListener("matchAccepted", function(challenger){
 					showTemplate("game", function(node){
-						//daten anzeigen
+						node.find("#challenger").html(challenger);
+						var opp = name;
+						if(challenger == name){
+							opp = opponent;
+						}
+						node.find("#opponent").html(opp);
+						startGame();
 					});
 				});
 				Connection.addOpenListener(function(evt){

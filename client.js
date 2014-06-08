@@ -75,8 +75,8 @@ Client.prototype = {
 					opponent: self
 				});
 				requester.game = self.game;
-				self.sendAcceptMatch();
-				requester.sendAcceptMatch();
+				self.sendAcceptMatch(requester.name);
+				requester.sendAcceptMatch(requester.name);
 			}
 			else{
 				requester.sendDeclineMatch("Der andere Spieler hat die Herausforderung abgelehnt");
@@ -84,8 +84,8 @@ Client.prototype = {
 		});
 	},
 	
-	sendAcceptMatch: function(){
-		this.connection.send("matchAccepted", null);
+	sendAcceptMatch: function(challenger){
+		this.connection.send("matchAccepted", challenger);
 	},
 	
 	sendDeclineMatch: function(reason){
