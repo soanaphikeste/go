@@ -19,6 +19,8 @@
 			Eigentlich sollten Sie hier Go spielen können...
 		</div>
 		<script>
+			var opponent;
+			
 			function showTemplate(template, handler){
 				$.ajax({
 					url: "templates/" + template + ".html",
@@ -33,13 +35,55 @@
 				});
 			}
 			
+			function showPopUp(message){
+				alert(message);
+			}
+			
+			function showConfirmPopUp(message, yes, no, clickHandler){
+				$("<div>" + message + "</div>")
+					.append($("<button>" + yes + "</button>").click(function(){
+							clickHandler(true);
+						}))
+					.append($("<button>" + no + "</button>").click(function(){
+							clickHandler(false);
+						}))
+					.appendTo($("body"));
+			}
+			
 			$(function(){
 				showTemplate("loading");
 				console.log("Hello");
 				Connection.init();
 				Connection.addMessageListener("setName", function(data){
 					showTemplate("start", function(node) {
-						node.find("#my_name").html(data);
+						node.find("#my_name").html("Mein Name: " + data.substring(0,1).toUpperCase() + data.substring(1, data.length).toLowerCase());
+						var name = node.find("#other_name");
+						node.find("#challenge").click(function(){
+							challenge(name.val().toUpperCase());
+						});
+						node.find("#other_name").keyup(function(evt){
+							if(evt.which == 13){
+								challenge(name.val().toUpperCase());
+							}
+						});
+					});
+				});
+				Connection.addMessageListener("matchRequest", function(name, answer){
+					if(opponent !== undefined){
+						answer(false);
+					}
+					else{
+						showConfirmPopUp(name + " hat dich herausgefordert. Möchtest du die Herausforderung annehmen?", "Ja", "Nein", function(yes){
+							answer(yes);
+						});
+					}
+				}, true);
+				Connection.addMessageListener("matchDeclined", function(reason){
+					showPopUp(reason);
+				});
+				Connection.addMessageListener("matchAccepted", function(data){
+					showTemplate("game", function(node){
+						//daten anzeigen
 					});
 				});
 				Connection.addOpenListener(function(evt){

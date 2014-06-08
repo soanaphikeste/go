@@ -1,4 +1,4 @@
-var consonants = "BDFGHJKLMNPRSTUWZ";
+var consonants = "BDFGHJKLMNPRSTWZ";
 var vocals = "AEIOU";
 var idLen = 6;
 
@@ -24,17 +24,28 @@ var Client = function(clients, connection){
 	
 	this.connection.send("setName", this.name);
 	
+	var self = this;
 	this.connection.addListener("connectToPlayer", function(name){
-		for(client in this.clients){
+		var found = false;
+		for(client in self.clients){
 			if(clients[client].name == name){
-				clients[client].sendMatchRequest(this);
+				found = true;
+				if(clients[client] == self){
+					self.sendDeclineMatch("Man kann sich nicht selbst herausfordern");
+					break;
+				}
+				clients[client].sendMatchRequest(self);
+				break;
 			}
+		}
+		if(!found){
+			self.sendDeclineMatch("Der Spieler ist nicht online");
 		}
 	});
 	
 	this.connection.addListener("click", function(pos){
-		if(this.game !== undefined){
-			this.game.makeTurn(this, pos.y, pos.x);
+		if(self.game !== undefined){
+			self.game.makeTurn(self, pos.y, pos.x);
 		}
 	});
 };
@@ -56,18 +67,19 @@ Client.prototype = {
 	},
 	
 	sendMatchRequest: function(requester){
+		var self = this;
 		this.connection.send("matchRequest", requester.name, function(accepted){
 			if(accepted){
-				this.game = new ServerGame({
+				self.game = new ServerGame({
 					challenger: requester,
-					opponent: this
+					opponent: self
 				});
-				requester.game = this.game;
-				this.sendAcceptMatch();
+				requester.game = self.game;
+				self.sendAcceptMatch();
 				requester.sendAcceptMatch();
 			}
 			else{
-				requester.sendDeclineMatch();
+				requester.sendDeclineMatch("Der andere Spieler hat die Herausforderung abgelehnt");
 			}
 		});
 	},
@@ -76,8 +88,8 @@ Client.prototype = {
 		this.connection.send("matchAccepted", null);
 	},
 	
-	sendDeclineMatch: function(name){
-		this.connection.send("matchDeclined", null);
+	sendDeclineMatch: function(reason){
+		this.connection.send("matchDeclined", reason);
 	},
 	
 	nextTurn: function(name){

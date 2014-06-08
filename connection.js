@@ -12,8 +12,11 @@ var Connection = function(socket){
 };
 
 Connection.prototype = {
-	addListener: function(key, listener){
-		this.listeners[key] = listener;
+	addListener: function(key, listener, async){
+		this.listeners[key] = {
+			listener: listener,
+			async: async === true
+		};
 	},
 	
 	send: function(key, param, handler){
@@ -40,13 +43,25 @@ Connection.prototype = {
 		if(obj.type == "req" && obj.key !== undefined ){
 			var listener = this.listeners[obj.key];
 			if(listener !== undefined){
-				var ans = listener(obj.param);
-				var answer = {
-					id: obj.id,
-					type: "res",
-					param: ans
-				};
-				this.socket.send(JSON.stringify(answer));
+				if(listener.async){
+					listener.listener(obj.param, function(ans){
+						var answer = {
+							id: obj.id,
+							type: "res",
+							param: ans
+						};
+						this.socket.send(JSON.stringify(answer));
+					});
+				}
+				else{
+					var ans = listener.listener(obj.param);
+					var answer = {
+						id: obj.id,
+						type: "res",
+						param: ans
+					};
+					this.socket.send(JSON.stringify(answer));
+				}
 			}
 		}
 		else if(obj.type == "res"){

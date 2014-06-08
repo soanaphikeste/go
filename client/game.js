@@ -17,6 +17,15 @@ function startGame(){
 	Graphics.addCursor(cursor);
 }
 
+function challenge(name){
+	if(opponent !== undefined){
+		showPopUp("Man kann nur eine Person zur Zeit herausfordern");
+		return;
+	}
+	opponent = name;
+	Connection.send("connectToPlayer", name);
+}
+
 var Game = {
 	
 	init: function(){	

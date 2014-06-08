@@ -5,6 +5,7 @@ var Connection = {
 		this.closeListener = [];
 		this.messageListener = {};
 		this.responses = {};
+		this.id = 0;
 		
 		this.socket = new WebSocket("ws://"+ location.hostname + ":" + port + "/");
 		var self = this;
@@ -24,27 +25,36 @@ var Connection = {
 	},
 	
 	onMessage: function(evt){
-		console.log("received: " + evt.data);
+		var self = this;
 		var obj = JSON.parse(evt.data);
+		console.log("received: " + evt.data);
 		if(obj.type === undefined || obj.id === undefined){
-			console.error("Invalid packet received: " + obj + " - Required field missing");
+			console.error("received broken packet: " + evt.data + " - Required field missing");
 			return;
 		}
 		
-		if(obj.type == "req" && obj.key !== undefined){
-			var handler = this.messageListener[obj.key];
-			if(handler !== undefined){
-				var ans = handler(obj.param);
-				var answer = {
-					id: obj.id,
-					type: "res",
-					param: ans
-				};
-				this.socket.send(JSON.stringify(answer));
-			}
-			else{
-				console.error("Unknown key received: " + evt.data);
-				return;
+		if(obj.type == "req" && obj.key !== undefined ){
+			var listener = this.messageListener[obj.key];
+			if(listener !== undefined){
+				if(listener.async){
+					listener.listener(obj.param, function(ans){
+						var answer = {
+							id: obj.id,
+							type: "res",
+							param: ans
+						};
+						self.socket.send(JSON.stringify(answer));
+					});
+				}
+				else{
+					var ans = listener.listener(obj.param);
+					var answer = {
+						id: obj.id,
+						type: "res",
+						param: ans
+					};
+					this.socket.send(JSON.stringify(answer));
+				}
 			}
 		}
 		else if(obj.type == "res"){
@@ -55,7 +65,7 @@ var Connection = {
 			}
 		}
 		else{
-			console.error("Invalid packet received: " + obj + " - Key missing");
+			console.error("received broken packet: " + message + " - Invalid type");
 			return;
 		}
 	},
@@ -90,18 +100,22 @@ var Connection = {
 		this.closeListener.push(listener);
 	},
 	
-	addMessageListener: function(key, listener){
-		this.messageListener[key] = listener;
+	addMessageListener: function(key, listener, async){
+		this.messageListener[key] = {
+			listener: listener,
+			async: async === true
+		};
 	},
 	send: function(key, param, handler){
 		var meta = {
 			param: param,
 			key: key,
 			type: "req",
-			id: this.id++
+			id: this.id
 		};
-		this.responses[id] = handler;
+		this.responses[this.id] = handler;
 		console.log("send: " + JSON.stringify(meta));
 		this.socket.send(JSON.stringify(meta));
+		this.id++;
 	}
 };
