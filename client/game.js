@@ -1,6 +1,22 @@
 var white = true;
 var black = false;
 
+function startGame(){
+	var canvas = $('<canvas width="1024" height="1024"></canvas>').appendTo("body");
+	var cursor = new Cursor(canvas[0], { cursorColor: "#6060D5", tokenColor: "#8989E0"});
+	Game.init();
+	Graphics.init({
+		canvas: canvas,
+		margin: {
+			inner: 10,
+			outer: 20,
+			token: 2
+		},
+		letterSize: 20
+	});
+	Graphics.addCursor(cursor);
+}
+
 var Game = {
 	
 	init: function(){	

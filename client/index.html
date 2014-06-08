@@ -13,26 +13,37 @@
 		<link rel="stylesheet" href="style.css" />
 	</head>
 	<body>
-		<canvas width="1024" height="1024"></canvas>
+		<h1>Coole Überschrift</h1>
+		<div id="content">
+			Bitte aktivieren Sie JavaScript in Ihrem Browser, um diese Seite richtig darzustellen. 
+			Eigentlich sollten Sie hier Go spielen können...
+		</div>
 		<script>
+			function showTemplate(template, handler){
+				$.ajax({
+					url: "templates/" + template + ".html",
+					success: function(html) {
+						$("#content").html("");
+						var node = $(html);
+						node.appendTo($("#content"));
+						if(handler !== undefined) {
+							handler($("#content"));
+						}
+					}
+				});
+			}
+			
 			$(function(){
+				showTemplate("loading");
 				console.log("Hello");
 				Connection.init();
 				Connection.addMessageListener("setName", function(data){
-					alert("My name is " + data);
+					showTemplate("start", function(node) {
+						node.find("#my_name").html(data);
+					});
 				});
-				var cursor = new Cursor($("canvas")[0], { cursorColor: "#6060D5", tokenColor: "#8989E0"});
-				Game.init();
-				Graphics.init({
-					canvas: $("canvas"),
-					margin: {
-						inner: 10,
-						outer: 20,
-						token: 2
-					},
-					letterSize: 20
+				Connection.addOpenListener(function(evt){
 				});
-				Graphics.addCursor(cursor);
 			});
 		</script>
 	</body>
