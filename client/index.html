@@ -5,6 +5,7 @@
 		<title>Go</title>
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 		<script src="port.js"></script>
+		<script src="connection.js"></script>
 		<script src="vector.js"></script>
 		<script src="graphics.js"></script>
 		<script src="game.js"></script>
@@ -16,6 +17,10 @@
 		<script>
 			$(function(){
 				console.log("Hello");
+				Connection.init();
+				Connection.addMessageListener("setName", function(data){
+					alert("My name is " + data);
+				});
 				var cursor = new Cursor($("canvas")[0], { cursorColor: "#6060D5", tokenColor: "#8989E0"});
 				Game.init();
 				Graphics.init({

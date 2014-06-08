@@ -1,13 +1,16 @@
 /*
  * Imports 
  */
+var WebSocketServer = require('ws').Server;
 var http = require("http"); //Import http to server files
 var fs = require("fs"); //Import tools for manipulating filesystem
 var url = require("url"); //Parsing urls
 var mime = require('mime'); //Parsing MIME-Types
+var Connection = require("./connection.js");
+var Client = require("./client.js");
 
 var ports = {
-	webserver: 81,
+	webserver: 1234,
 	websocket: 2806
 };
 
@@ -34,7 +37,18 @@ function startServers(){
 				response.end(data);
 			}
 		});
+		
 	}).listen(ports.webserver);
+	
+	this.clients = [];
+	new WebSocketServer({
+		host: "0.0.0.0", 
+		port: ports.websocket
+	}).on("connection", function(socket){
+		var connection = new Connection(socket);
+		clients.push(new Client(clients, connection));
+		console.log("Client connected!");
+	});
 };
 
 fs.writeFile("client/port.js", "var port = " + ports.websocket + ";", function(err){
