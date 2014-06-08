@@ -53,6 +53,10 @@ var Game = {
 		}
 		this.board[row][col] = this.color;
 		this.color = !this.color;
+	},
+	
+	remove: function(row, col){
+		this.board[row][col] = undefined;
 	}
 };
 

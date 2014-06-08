@@ -116,6 +116,11 @@
 				Connection.addMessageListener("madeTurn", function(pos){
 					Game.place(pos.row, pos.col);
 				});
+				Connection.addMessageListener("removeToken", function(tokens){
+					for(token in tokens){
+						Game.remove(tokens[token].row, tokens[token].col);
+					}
+				});
 			});
 		</script>
 	</body>

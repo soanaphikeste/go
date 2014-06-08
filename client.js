@@ -105,6 +105,10 @@ Client.prototype = {
 	
 	sendInvalidTurn: function(row, col, reason){
 		this.connection.send("invalidTurn", {row: row, col: col, reason: reason});
+	},
+	
+	sendRemoveToken: function(tokens){
+		this.connection.send("removeToken", tokens);
 	}
 };
 

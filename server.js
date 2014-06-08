@@ -14,6 +14,12 @@ var ports = {
 	websocket: 2806
 };
 
+Array.prototype.pushAll = function(arr) {
+	for(var i = 0; i < arr.length; i++) {
+		this.push(arr[i]);
+	}
+};
+
 function startServers(){
 	http.createServer(function(request, response){
 		var path = url.parse(request.url).pathname;
