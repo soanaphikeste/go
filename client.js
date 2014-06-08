@@ -1,5 +1,6 @@
-var codes = "ABCDEFGHJKLMNPQRSTUVWXYZ";
-var idLen = 5;
+var consonants = "BDFGHJKLMNPRSTUWZ";
+var vocals = "AEIOU";
+var idLen = 6;
 
 var ServerGame = require("./servergame.js");
 
@@ -41,8 +42,15 @@ var Client = function(clients, connection){
 Client.prototype = {
 	makeName: function(){
 		var id = "";
+		var vocal = false;
 		for(var i = 0; i < idLen; i++){
-			id += codes.charAt(parseInt(Math.random() * 25));
+			if(vocal){
+				id += vocals.charAt(parseInt(Math.random() * vocals.length));
+			}
+			else{
+				id += consonants.charAt(parseInt(Math.random() * consonants.length));
+			}
+			vocal = !vocal;
 		}
 		return id;
 	},
