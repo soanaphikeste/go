@@ -63,6 +63,7 @@ ServerGame.prototype = {
 	},
 	
 	turnValid: function(player, row, col){
+		if(this.board[row][col] !== undefined) return false;
 		var color = player == this.challenger;
 		this.board[row][col] = color;
 		if(this.hasFreedom(color, row, col, this.createEmptyBoard())){
