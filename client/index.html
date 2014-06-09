@@ -94,6 +94,9 @@
 							node.find("#opponent").html(toNaturalName(opp));
 							startGame(myName);
 							answer();
+							$("#endgame").click(function() {
+								location.reload();
+							});
 						});
 					}, true);
 					Connection.addMessageListener("nextTurn", function(name){
