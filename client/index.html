@@ -9,10 +9,14 @@
 		<link rel="stylesheet" href="style.css" />
 	</head>
 	<body>
-		<h1>Coole Überschrift</h1>
-		<div id="content">
-			Bitte aktivieren Sie JavaScript in Ihrem Browser, um diese Seite richtig darzustellen. 
-			Eigentlich sollten Sie hier Go spielen können...
+		<div class="wrapper">
+			<div class="rotatehelper">
+				<h1>Web-Go</h1>
+			</div>
+			<div id="content">
+				Bitte aktivieren Sie JavaScript in Ihrem Browser, um diese Seite richtig darzustellen. 
+				Eigentlich sollten Sie hier Go spielen können...
+			</div>
 		</div>
 		<script>
 			var opponent;
@@ -32,25 +36,33 @@
 			}
 			
 			function showPopUp(message){
-				alert(message);
+				var blocker = $("<div class='blocker'></div>").appendTo("body");
+				var div = $("<div class='popup'></div>").append("<p>" + message +"</p>");
+				div.append($("<button>Okay</button>").click(function() {
+					div.remove();
+					blocker.remove();
+				})).appendTo(blocker);
 			}
 			
 			function showConfirmPopUp(message, yes, no, clickHandler){
-				var div = $('<div>' + message + "</div>");
-					div.append($("<button>" + yes + "</button>").click(function(){
+				var blocker = $("<div class='blocker'></div>").appendTo("body");
+				var div = $('<div class="popup"></div>').append("<p>" + message + "</p>");
+					div.append($("<button style='float: left'>" + yes + "</button>").click(function(){
 							div.remove();
+							blocker.remove();
 							clickHandler(true);
 						}))
-					.append($("<button>" + no + "</button>").click(function(){
+					.append($("<button style='float: right'>" + no + "</button>").click(function(){
 							div.remove();
+							blocker.remove();
 							clickHandler(false);
 						}))
-					.appendTo($("body"));
+					.appendTo(blocker);
 			}
 			
 			$(function(){
 				showTemplate("loading");
-				console.log("Hello");
+								console.log("Hello");
 				Connection.init();
 				Connection.addMessageListener("setName", function(myName){
 					
@@ -59,7 +71,7 @@
 							answer(false);
 						}
 						else{
-							showConfirmPopUp(name + " hat dich herausgefordert. Möchtest du die Herausforderung annehmen?", "Ja", "Nein", function(yes){
+							showConfirmPopUp(name + " hat Sie herausgefordert. Möchten Sie die Herausforderung annehmen?", "Ja", "Nein", function(yes){
 								if(yes){
 									opponent = name;
 								}
@@ -98,7 +110,7 @@
 					});
 					
 					showTemplate("start", function(node) {
-						node.find("#my_name").html("Mein Name: " + myName.substring(0,1).toUpperCase() + myName.substring(1, myName.length).toLowerCase());
+						node.find("#my_name").html(myName.substring(0,1).toUpperCase() + myName.substring(1, myName.length).toLowerCase());
 						var name = node.find("#other_name");
 						node.find("#challenge").click(function(){
 							challenge(name.val().toUpperCase());

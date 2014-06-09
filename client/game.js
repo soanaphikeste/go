@@ -11,7 +11,11 @@ var black = false;
 
 function startGame(myName){
 	var canvas = $("canvas");
-	var cursor = new Cursor(canvas[0], { cursorColor: "#6060D5", tokenColor: "#8989E0", cursorColorDeactivated: "grey"});
+	var cursor = new Cursor(canvas[0], { 
+		cursorColor: "#7777F6", 
+		tokenColor: "#8989E0", 
+		cursorColorDeactivated: "#A6A6A6"
+	});
 	Game.init(myName);
 	Graphics.init({
 		canvas: canvas,

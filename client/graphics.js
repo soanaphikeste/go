@@ -7,6 +7,44 @@
  * Distributed 2014 by Soana (Andra Ruebsteck) under the terms of GPL.
  */
 var Graphics = {
+	imageurls: ["boardwood.jpg"],
+	images: {},
+	
+	imageLoaded: function(){
+		var f = true;
+		for(var img in this.imageurls){
+			if(this.images[this.imageurls[img]] === undefined){
+				f = false;
+				console.log(this.imageurls[img] + " not loaded yet");
+				break;
+			}
+		}
+		if(f){
+			this.fullyLoaded();
+		}
+	},
+	
+	loadImages: function(){
+		var self = this;
+		for(var img in this.imageurls){
+			var image = this.imageurls[img];
+			var obj = new Image();
+			obj.src = image;
+			obj.onload = function(){
+				self.images[image] = obj;
+				console.log(obj);
+				console.log(image + " successfully loaded");
+				self.imageLoaded();
+			}
+		}
+	},
+	
+	fullyLoaded: function(){
+		console.log("All images loaded");
+		this.setupBoard();
+		this.draw();
+	},
+	
 	init: function(args){
 		this.cursors = [];
 		this.margin = {
@@ -40,8 +78,8 @@ var Graphics = {
 		
 		console.log("Graphics started");
 		window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
-		this.setupBoard();
-		this.draw();
+		
+		this.loadImages();
 	},
 	
 	draw: function(){
@@ -63,7 +101,12 @@ var Graphics = {
 	setupBoard: function(){
 		this.ctx.strokeStyle = this.drawStyle.lineColor;
 		this.ctx.fillStyle = this.drawStyle.backgroundColor;
-		this.ctx.fillRect(0,0, this.size.min, this.size.min);
+		//this.ctx.fillRect(0,0, this.size.min, this.size.min);
+		for(var x = 0; x < this.size.min; x += this.images["boardwood.jpg"].width){
+			for(var y = 0; y < this.size.min; y += this.images["boardwood.jpg"].height){
+				this.ctx.drawImage(this.images["boardwood.jpg"], x, y);
+			}
+		}
 		
 		this.ctx.fillStyle = this.ctx.strokeStyle;
 		this.ctx.lineWidth = this.drawStyle.innerLineWidth;
