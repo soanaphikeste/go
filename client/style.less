@@ -2,6 +2,7 @@
 
 @background: #5E401E;
 @fontcolor: #E7D3A7;
+@pencolor: #1C0C77;
 
 body{
 	height: 100%;
@@ -87,7 +88,7 @@ body{
 			-webkit-transform: rotate(270deg) translate(-240px,-276px);
 			-moz-transform: rotate(270deg) translate(-240px,-276px);
 			-opera-transform: rotate(270deg) translate(-240px,-276px);
-			-transform: rotate(270deg) translate(-240px,-276px);
+			transform: rotate(270deg) translate(-240px,-276px);
 		}
 		float: left;
 	}
@@ -97,8 +98,36 @@ body{
 		background: url("paper.jpg");
 		width: 442px;
 		height: 650px;
-		color: #1C0C77;
+		color: @pencolor;
 		padding-left: 20px;
+		#challenger, #opponent {
+			-webkit-transition: color 1s;
+			-moz-transition: color 1s;
+			-opera-transition: color 1s;
+			transition: color 1s;
+		}
+		table {
+			margin-top: 30px;
+			border-spacing: 0;
+			tr:first-child {
+				td {
+					border-bottom: 2px solid @pencolor;
+				}
+			}
+			tr {
+				td {
+					width: 180px;
+				}
+				td:first-child {
+					text-align: right;
+					border-right: 2px solid @pencolor;
+					padding-right: 25px;
+				}
+				td:last-child {
+					padding-left: 25px;
+				}
+			}
+		}
 	}
 	div.game{
 		float:left;

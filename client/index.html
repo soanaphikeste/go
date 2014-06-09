@@ -85,12 +85,12 @@
 					});
 					Connection.addMessageListener("matchAccepted", function(challenger, answer){
 						showTemplate("game", function(node){
-							node.find("#challenger").html(challenger);
+							node.find("#challenger").html(toNaturalName(challenger));
 							var opp = myName;
 							if(challenger == myName){
 								opp = opponent;
 							}
-							node.find("#opponent").html(opp);
+							node.find("#opponent").html(toNaturalName(opp));
 							startGame(myName);
 							answer();
 						});
@@ -99,18 +99,18 @@
 						Game.currentPlayer = name;
 						var challenger = $("#challenger").html();
 						console.log("Challenger: " + challenger);
-						if(challenger == name){
+						if(challenger.toUpperCase() == name){
 							$("#challenger").css({"color": "red"});
-							$("#opponent").css({"color": "black"});
+							$("#opponent").css({"color": "#1C0C77"});
 						}
 						else{
-							$("#challenger").css({"color": "black"});
+							$("#challenger").css({"color": "#1C0C77"});
 							$("#opponent").css({"color": "red"});
 						}
 					});
 					
 					showTemplate("start", function(node) {
-						node.find("#my_name").html(myName.substring(0,1).toUpperCase() + myName.substring(1, myName.length).toLowerCase());
+						node.find("#my_name").html(toNaturalName(myName));
 						var name = node.find("#other_name");
 						node.find("#challenge").click(function(){
 							challenge(name.val().toUpperCase());
@@ -123,6 +123,10 @@
 					});
 				});
 			});
+			
+			function toNaturalName(name) {
+				return name.substring(0,1).toUpperCase() + name.substring(1, name.length).toLowerCase()
+			}
 		</script>
 	</body>
 </html>
