@@ -10,6 +10,8 @@ var ServerGame = function(members){
 	
 	this.challenger = members.challenger;
 	this.opponent = members.opponent;
+	this.challenger.mouseListen(this.opponent);
+	this.opponent.mouseListen(this.challenger);
 	this.challengerTurn = false;
 };
 

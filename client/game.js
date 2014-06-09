@@ -11,7 +11,12 @@ var black = false;
 
 function startGame(myName){
 	var canvas = $("canvas");
-	var cursor = new Cursor(canvas[0], { 
+	var cursor = new Cursor({ 
+		cursorColor: "#7777F6", 
+		tokenColor: "#8989E0", 
+		cursorColorDeactivated: "#A6A6A6"
+	}, canvas[0]);
+	var enemyCursor = new Cursor({ 
 		cursorColor: "#7777F6", 
 		tokenColor: "#8989E0", 
 		cursorColorDeactivated: "#A6A6A6"
@@ -27,6 +32,7 @@ function startGame(myName){
 		letterSize: 20
 	});
 	Graphics.addCursor(cursor);
+	Graphics.addCursor(enemyCursor);
 }
 
 function challenge(name){

@@ -113,6 +113,15 @@ Client.prototype = {
 	
 	sendColor : function(color){
 		this.connection.send("color", color);
+	},
+	
+	mouseListen : function(other) {
+		this.connection.addListener("moveCursor", function(obj) {
+			other.connection.send("cursorMove", {
+				x: obj.x,
+				y: obj.y
+			});
+		});
 	}
 };
 
