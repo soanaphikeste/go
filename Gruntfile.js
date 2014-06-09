@@ -71,7 +71,7 @@ module.exports = function(grunt) {
 					files: [
 						{
 							expand: true, 
-							src: ["*.html", "templates/*.html", "*.jpg", "gondola/*"],
+							src: ["*.html", "templates/*.html", "*.jpg", "*.png", "gondola/*"],
 							dest: "<%= config.webroot %>/",
 							cwd: "client/",
 							filter: "isFile"

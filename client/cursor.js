@@ -84,7 +84,9 @@ Cursor.prototype = {
 				else {
 					color2 = "rgba(0, 0, 0, 0.4)";
 				}
-				Graphics.drawToken(this.cell.x, this.cell.y, color2);
+				Graphics.ctx.globalAlpha = 0.5;
+				Graphics.drawToken(this.cell.x, this.cell.y, Game.ownColor);
+				Graphics.ctx.globalAlpha = 1;
 			}
 		}
 		

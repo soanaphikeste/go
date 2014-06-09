@@ -7,7 +7,7 @@
  * Distributed 2014 by Soana (Andra Ruebsteck) under the terms of GPL.
  */
 var Graphics = {
-	imageurls: ["boardwood.jpg"],
+	imageurls: ["boardwood.jpg", "token_white.png", "token_black.png"],
 	images: {},
 	
 	imageLoaded: function(){
@@ -30,12 +30,14 @@ var Graphics = {
 			var image = this.imageurls[img];
 			var obj = new Image();
 			obj.src = image;
-			obj.onload = function(){
-				self.images[image] = obj;
-				console.log(obj);
-				console.log(image + " successfully loaded");
-				self.imageLoaded();
-			}
+			(function(obj, image) {
+				obj.onload = function(){
+					self.images[image] = obj;
+					console.log(obj);
+					console.log(image + " successfully loaded");
+					self.imageLoaded();
+				}
+			})(obj, image);
 		}
 	},
 	
@@ -157,7 +159,7 @@ var Graphics = {
 		for(var i = 0; i < Game.board.length; i++){
 			for(var j = 0; j < Game.board[0].length; j++){
 				if(Game.board[i][j] !== undefined){
-					this.drawToken(j, i, Game.board[i][j] == white ? "#FFFFFF": "#000000");
+					this.drawToken(j, i, Game.board[i][j]/* == white ? "#FFFFFF": "#000000"*/);
 				}
 			}
 		}
@@ -165,12 +167,14 @@ var Graphics = {
 	
 	drawToken: function(row, col, color){
 		this.ctx.fillStyle = color;
-		this.ctx.strokeStyle = this.drawStyle.lineColor;
-		this.ctx.lineWidth = 1;
-		this.ctx.beginPath();
-		this.ctx.arc(this.margin.all + row * this.size.field, this.margin.all + col * this.size.field, this.size.field/2 - this.margin.token, 0, 2*Math.PI);
-		this.ctx.fill();
-		this.ctx.stroke();
+		//this.ctx.strokeStyle = this.drawStyle.lineColor;
+		//this.ctx.lineWidth = 1;
+		//this.ctx.beginPath();
+		//this.ctx.arc(this.margin.all + row * this.size.field, this.margin.all + col * this.size.field, this.size.field/2 - this.margin.token, 0, 2*Math.PI);
+		//this.ctx.fill();
+		//this.ctx.stroke();
+		var img = color== white ? this.images["token_white.png"] : this.images["token_black.png"];
+		this.ctx.drawImage(img, this.margin.all + row * this.size.field - this.size.field/2, this.margin.all + col * this.size.field- this.size.field/2, this.size.field - this.margin.token, this.size.field - this.margin.token);
 	},
 	
 	addCursor: function(cursor){
