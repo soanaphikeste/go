@@ -1,3 +1,11 @@
+/**
+ * graphics.js
+ * 
+ * This file will handle the drawing of the board, 
+ * tokens and the cursor.
+ * 
+ * Distributed 2014 by Soana (Andra Ruebsteck) under the terms of GPL.
+ */
 var Graphics = {
 	init: function(args){
 		this.cursors = [];

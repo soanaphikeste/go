@@ -1,3 +1,11 @@
+/**
+ * game.js
+ * 
+ * This class represents the logic part of the game. (It's board, tokens
+ * and players)
+ * 
+ * Distributed 2014 by Soana (Andra Ruebsteck) under the terms of GPL.
+ */
 var white = true;
 var black = false;
 

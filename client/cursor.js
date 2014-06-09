@@ -1,3 +1,11 @@
+/**
+ * cursor.js
+ * 
+ * Displays the players cursor on the HTML5-canvas element and listens
+ * to the players mouseevents.
+ * 
+ * Distributed 2014 by Soana (Andra Ruebsteck) under the terms of GPL.
+ */
 var Cursor = function(canvas, colors){
 	this.pos = new vec(0,0);
 	this.gap = degToRad(40);

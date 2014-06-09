@@ -1,3 +1,11 @@
+/**
+ * connection.js
+ * 
+ * Handles the connection between the browser and the server on top
+ * of the websocket-protocol.
+ * 
+ * Distributed 2014 by Soana (Andra Ruebsteck) under the terms of GPL.
+ */
 var Connection = {
 	init: function(){
 		this.openListener = [];
