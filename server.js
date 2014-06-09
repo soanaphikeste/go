@@ -27,12 +27,6 @@ fs.readFile("config.json", function(err, data) {
 		return;
 	}
 
-	Array.prototype.pushAll = function(arr) {
-		for(var i = 0; i < arr.length; i++) {
-			this.push(arr[i]);
-		}
-	};
-
 	function startServers(){
 		if(config.webserver) {
 			http.createServer(function(request, response){

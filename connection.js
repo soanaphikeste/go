@@ -1,6 +1,7 @@
 
 var Connection = function(socket){
 	this.listeners = {};
+	this.closeListeners = [];
 	this.responses = {};
 	this.id = 0;
 	
@@ -9,9 +10,17 @@ var Connection = function(socket){
 	this.socket.on("message", function(message){
 		self.receive(message);
 	});
+	this.socket.on("close", function(){
+		for(var i in self.closeListeners) {
+			self.closeListeners[i]();
+		}
+	});
 };
 
 Connection.prototype = {
+	addCloseListener : function(func) {
+		this.closeListeners.push(func);
+	},
 	addListener: function(key, listener, async){
 		this.listeners[key] = {
 			listener: listener,

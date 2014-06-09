@@ -48,6 +48,10 @@ var Client = function(clients, connection){
 			self.game.makeTurn(self, pos.row, pos.col);
 		}
 	});
+	
+	this.connection.addCloseListener(function() {
+		self.clients.splice(self.clients.indexOf(this), 1);
+	});
 };
 
 Client.prototype = {
@@ -119,12 +123,35 @@ Client.prototype = {
 	},
 	
 	mouseListen : function(other) {
+		var self = this;
 		this.connection.addListener("moveCursor", function(obj) {
+			if(self.game === undefined || other === undefined) return;
 			other.connection.send("cursorMove", {
 				x: obj.x,
 				y: obj.y
 			});
 		});
+	},
+	
+	closeListen : function(other) {
+		var self = this;
+		console.log(this.name + " is listening for closing socket and will notify " + other.name + " then.");
+		this.connection.addCloseListener(function() {
+			console.log("Client closed his window :'-(");
+			if(self.game === undefined || other === undefined) return;
+			console.log("Ending game of other player");
+			other.endGame("Dein Gegner hat das Spiel verlassen!");
+			self.endGame();
+			console.log("Everything terminated");
+		});
+	},
+	
+	endGame : function(message) {
+		this.game.terminate();
+		this.game = undefined;
+		if(message !== undefined) {
+			this.connection.send("end", message);
+		}
 	}
 };
 
