@@ -1,11 +1,12 @@
 To install please take the following steps:
-1.) If not already done, install nodejs from http://nodejs.org
-2.) Install all dependencies by simply typing "npm install"
-3.) In order to use grunt to build the sources, please install grunt-cli
-	By typing "sudo npm install -g grunt-cli". This will install the 
-	grunt-commandline-interface globally on your computer.
-4.) Create an example config-file by running "grunt"
-5.) Edit the File according to your needs
-6.) Run grunt again to build the sources
-7.) Start the server somehow like this "node server.js"
-8.) Have fun.
+-------------------------------------------
+ 1. If not already done, install nodejs from http://nodejs.org
+ 2. Install all dependencies by simply typing "npm install"
+ 3. In order to use grunt to build the sources, please install grunt-cli
+		By typing "sudo npm install -g grunt-cli". This will install the 
+		grunt-commandline-interface globally on your computer.
+ 4. Create an example config-file by running "grunt"
+ 5. Edit the File according to your needs
+ 6. Run grunt again to build the sources
+ 7. Start the server somehow like this "node server.js"
+ 8. Have fun.
