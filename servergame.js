@@ -34,8 +34,8 @@ ServerGame.prototype = {
 				this.board[row][col] = this.challengerTurn;
 				var removed = this.removeTokens(player == this.challenger, row, col);//retrieve array of all tokens to remove for this player starting at row|col
 				if(removed.length != 0){
-					this.challenger.sendRemoveToken(removed);
-					this.opponent.sendRemoveToken(removed);
+					this.challenger.sendRemoveToken(removed, player == this.challenger);
+					this.opponent.sendRemoveToken(removed, player == this.challenger);
 				}
 				this.challenger.sendTurn(row, col);
 				this.opponent.sendTurn(row, col);
@@ -102,7 +102,7 @@ ServerGame.prototype = {
 		var removed = [];//Start with empty array
 		var self = this;
 		this.iterateOverNeighbours(row, col, function(p) {
-			if(self.inBoard(p.row, p.col) && self.board[p.row][p.col] != color && !self.hasFreedom(!color, p.row, p.col, self.createEmptyBoard())){//See if the color isn't our color (So it's either free or enemy)
+			if(self.inBoard(p.row, p.col) && self.board[p.row][p.col] !== undefined && self.board[p.row][p.col] != color && !self.hasFreedom(!color, p.row, p.col, self.createEmptyBoard())){//See if the color isn't our color (So it's either free or enemy)
 				removed.pushAll(self.helpRemoveTokens(!color, p.row, p.col));//Start recursion for this token
 			}
 		});
@@ -116,7 +116,7 @@ ServerGame.prototype = {
 		var self = this;
 		this.iterateOverNeighbours(row, col, function(p) {
 			if(self.inBoard(p.row, p.col) && self.board[p.row][p.col] == color){
-				removed.pushAll(self.helpRemoveTokens(!color, p.row, p.col));//Continue recursion for this token
+				removed.pushAll(self.helpRemoveTokens(color, p.row, p.col));//Continue recursion for this token
 			}
 		});
 		return removed;

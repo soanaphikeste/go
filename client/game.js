@@ -52,10 +52,22 @@ var Game = {
 		for(this.board = []; this.board.length < 19; this.board.push(Array(19)));
 		this.currentColor = black;
 		console.log("Game started");
-		Connection.addMessageListener("removeToken", function(tokens){
-			for(token in tokens){
-				self.remove(tokens[token].row, tokens[token].col);
+		Connection.addMessageListener("removeToken", function(data){
+			for(var token in data.tokens){
+				self.remove(data.tokens[token].row, data.tokens[token].col);
 			}
+			
+			var who;
+			if(data.challenger_prisoners){
+				console.log("Challenger captured " + data.tokens.length + " - " + data.challenger_prisoners);
+				who = $("#prisoners_challenger");
+			}
+			else{
+				console.log("Opponent captured " + data.tokens.length + " - " + data.challenger_prisoners);
+				who = $("#prisoners_opponent");
+			}
+			var howMany = parseInt(who.html())+data.tokens.length
+			who.html(howMany);
 		});
 		Connection.addMessageListener("madeTurn", function(pos){
 			self.place(pos.row, pos.col);

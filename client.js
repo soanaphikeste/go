@@ -107,8 +107,11 @@ Client.prototype = {
 		this.connection.send("invalidTurn", {row: row, col: col, reason: reason});
 	},
 	
-	sendRemoveToken: function(tokens){
-		this.connection.send("removeToken", tokens);
+	sendRemoveToken: function(tokens, challenger_prisoners){
+		this.connection.send("removeToken", {
+			tokens: tokens,
+			challenger_prisoners: challenger_prisoners
+		});
 	},
 	
 	sendColor : function(color){
