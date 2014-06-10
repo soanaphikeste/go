@@ -35,12 +35,13 @@
 				});
 			}
 			
-			function showPopUp(message){
+			function showPopUp(message, func){
 				var blocker = $("<div class='blocker'></div>").appendTo("body");
 				var div = $("<div class='popup'></div>").append("<p>" + message +"</p>");
 				div.append($("<button>Okay</button>").click(function() {
 					div.remove();
 					blocker.remove();
+					if(func !== undefined) func();
 				})).appendTo(blocker);
 			}
 			
@@ -93,6 +94,9 @@
 							node.find("#opponent").html(toNaturalName(opp));
 							startGame(myName);
 							answer();
+							$("#endgame").click(function() {
+								location.reload();
+							});
 						});
 					}, true);
 					Connection.addMessageListener("nextTurn", function(name){

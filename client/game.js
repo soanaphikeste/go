@@ -72,6 +72,11 @@ var Game = {
 		Connection.addMessageListener("madeTurn", function(pos){
 			self.place(pos.row, pos.col);
 		});
+		Connection.addMessageListener("end", function(message){
+			showPopUp(message, function() {
+				
+			});
+		});
 		Connection.addMessageListener("color", function(color){
 			self.ownColor = color;
 		});
