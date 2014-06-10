@@ -38,6 +38,15 @@ ServerGame.prototype = {
 		this.opponent.nextTurn(name);
 	},
 	
+	sendInvalid : function(reason, row, col) {
+		if(this.challengerTurn){ 
+			this.challenger.sendInvalidTurn(row, col, reason);
+		}
+		else{
+			this.opponent.sendInvalidTurn(row, col, reason);
+		}
+	},
+	
 	makeTurn: function(player, row, col){
 		if(this.terminated) return;
 		if((player == this.challenger && this.challengerTurn) || (player == this.opponent && !this.challengerTurn)){
@@ -53,20 +62,20 @@ ServerGame.prototype = {
 				this.challengerTurn = !this.challengerTurn;
 				this.nextTurn();
 			}
-			else if(this.challengerTurn){ 
-				this.challenger.sendInvalidTurn(row, col, "Invalid turn");
-			}
-			else{
-				this.opponent.sendInvalidTurn(row, col, "Invalid turn");
-			}
 		}
 	},
 	
 	turnValid: function(player, row, col){
-		if(this.board[row][col] !== undefined) return false;
+		if(this.board[row][col] !== undefined) {
+			this.sendInvalid("Kann keinen Stein auf einen anderen platzieren.", row, col);
+			return false;
+		}
 		var futureBoard = this.copyBoard(this.board);
 		futureBoard[row][col] = player == this.challenger;
-		if(!this.checkKo(futureBoard)) return false;
+		if(!this.checkKo(futureBoard)) {
+			this.sendInvalid("Sie würden ein Ko wiederholen.", row, col);
+			return false;
+		}
 		var color = player == this.challenger;
 		this.board[row][col] = color;
 		if(this.hasFreedom(color, row, col, this.createEmptyBoard())){
@@ -83,6 +92,7 @@ ServerGame.prototype = {
 			
 			if(!valid){
 				this.board[row][col] = undefined;
+				this.sendInvalid("Kann nicht Selbstmord begehen.", row, col);
 			}
 			return valid;
 		}
@@ -91,7 +101,6 @@ ServerGame.prototype = {
 	checkKo : function(board) {
 		var f = true, f2 = true;
 		if(this.lastBoard !== undefined && this.secondLastBoard !== undefined) {
-			console.log("Comparing");
 			f = false; 
 			f2 = false;
 			for(var x = 0; x < 19; x++) {

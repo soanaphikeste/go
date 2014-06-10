@@ -52,6 +52,9 @@ var Game = {
 		for(this.board = []; this.board.length < 19; this.board.push(Array(19)));
 		this.currentColor = black;
 		console.log("Game started");
+		Connection.addMessageListener("invalidTurn", function(obj) {
+			showPopUp("Ungültiger Zug: " + obj.reason);
+		});
 		Connection.addMessageListener("removeToken", function(data){
 			for(var token in data.tokens){
 				self.remove(data.tokens[token].row, data.tokens[token].col);
