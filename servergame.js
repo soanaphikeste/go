@@ -78,6 +78,7 @@ ServerGame.prototype = {
 		var freedom = false;
 		var self = this;
 		this.iterateOverNeighbours(row, col, function(p) {
+			console.log(p, visited);
 			if(self.inBoard(p.row, p.col) && !visited[p.row][p.col]){//See if the color isn't our color (So it's either free or enemy)
 				visited[p.row][p.col] = true;
 				freedom |= self.board[p.row][p.col] === undefined //Free field
@@ -88,7 +89,7 @@ ServerGame.prototype = {
 	},
 	
 	inBoard: function(row, col){
-		return (row%19-1 >= 0 && col%19-1 >= 0);
+		return row < 19 && col < 19 && row >= 0 && col >= 0;
 	},
 	
 	iterateOverNeighbours : function(row, col, func) {
