@@ -64,6 +64,9 @@ ServerGame.prototype = {
 	
 	turnValid: function(player, row, col){
 		if(this.board[row][col] !== undefined) return false;
+		var futureBoard = this.copyBoard(this.board);
+		futureBoard[row][col] = player == this.challenger;
+		if(!this.checkKo(futureBoard)) return false;
 		var color = player == this.challenger;
 		this.board[row][col] = color;
 		if(this.hasFreedom(color, row, col, this.createEmptyBoard())){
@@ -85,12 +88,58 @@ ServerGame.prototype = {
 		}
 	},
 	
+	checkKo : function(board) {
+		var f = true, f2 = true;
+		if(this.lastBoard !== undefined && this.secondLastBoard !== undefined) {
+			console.log("Comparing");
+			f = false; 
+			f2 = false;
+			for(var x = 0; x < 19; x++) {
+				for(var y = 0; y < 19; y++) {
+					if(this.lastBoard[x][y] !== board[x][y]) {
+						f = true;
+						break;
+					}
+				}
+				if(f) {
+					break;
+				}
+			}
+			for(var x = 0; x < 19; x++) {
+				for(var y = 0; y < 19; y++) {
+					if(this.secondLastBoard[x][y] !== board[x][y]) {
+						f2 = true;
+						break;
+					}
+				}
+				if(f2) {
+					break;
+				}
+			}
+		}
+		if(f && f2) {
+			this.secondLastBoard = this.copyBoard(this.lastBoard);
+			this.lastBoard = this.copyBoard(board);
+		}	
+		return f && f2;
+	},
+	
+	copyBoard: function(board) {
+		if(board == undefined) return undefined;
+		var b = this.createEmptyBoard();
+		for(var x = 0; x < 19; x++) {
+			for(var y = 0; y < 19; y++) {
+				b[x][y] = board[x][y];
+			}
+		}
+		return b;
+	},
+	
 	hasFreedom: function(color, row, col, visited){
 		visited[row][col] = true;
 		var freedom = false;
 		var self = this;
 		this.iterateOverNeighbours(row, col, function(p) {
-			console.log(p, visited);
 			if(self.inBoard(p.row, p.col) && !visited[p.row][p.col]){//See if the color isn't our color (So it's either free or enemy)
 				visited[p.row][p.col] = true;
 				freedom |= self.board[p.row][p.col] === undefined //Free field
@@ -112,7 +161,6 @@ ServerGame.prototype = {
 	},
 	
 	removeTokens: function(color, row, col){
-		console.log("removeTokens");
 		var removed = [];//Start with empty array
 		var self = this;
 		this.iterateOverNeighbours(row, col, function(p) {
@@ -124,7 +172,6 @@ ServerGame.prototype = {
 	},
 	
 	helpRemoveTokens: function(color, row, col){
-		console.log("helpRemoveTokens");
 		var removed = [];
 		removed.push({row: row, col: col});
 		this.board[row][col] = undefined;
